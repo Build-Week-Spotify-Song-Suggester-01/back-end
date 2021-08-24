@@ -1,0 +1,1 @@
+web: gunicron app:app -t 120
