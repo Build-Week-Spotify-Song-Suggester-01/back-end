@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Spotify Song Suggestor</title>
+        <link rel="stylesheet" href="https://unpkg.com/picnic"/>
+    </head>
+    <body>
+        <nav>
+            <a href="/" class="brand"><span>Spotify Song Suggestor</span></a>
+        
+            <!-- responsive-->
+            <input id="bmenub" type="checkbox" class="show">
+            <label for="bmenub" class="burger pseudo button">Menu</label>
+        
+            <div class="menu">
+                <a href="/" class="button success">Get Suggestions!</a>
+            </div>
+        </nav>
+        
+        <article class="flex two" style="padding: 3em 1em;">
+            {% block content %}
+            <div>
+                <h2>Enter a Song!</h2>
+                {% if artist %}
+                <p>
+                    This song is by <a href="{{artist_href}}" target="_blank">{{ artist }}!</a>
+                </p>
+                {% endif %}
+                {% for song in songs %}
+                <a href="/song/{{ song.name }}"><span class="stack">{{ song.name }}</span></a>
+                {% endfor %}
+                <form action="/" method="post">
+                    <input type="text" name="song_name" placeholder="Type your song here to get suggestions for other songs you may like!">
+                    <input type="submit" value="Get Suggestions!">
+                </form>
+            </div>
+            {% endblock %}  
+        </article>
+        <!-- <script src="https://cdn.jsdelivr.net/npm/umbrellajs"/> -->
+    </body>
+</html>
