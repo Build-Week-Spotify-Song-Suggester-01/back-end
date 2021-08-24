@@ -20,15 +20,28 @@
         <article class="flex two" style="padding: 3em 1em;">
             {% block content %}
             <div>
-                <h2>Enter a Song!</h2>
                 {% if artist %}
-                <p>
-                    This song is by <a href="{{artist_href}}" target="_blank">{{ artist }}!</a>
-                </p>
+                <h2>If you like "{{ name }}" by {{ artist }}, then you should check out the 10 songs below!</h2>
+                <p>Here's information for the song "{{ name }}"...</p>
+                <ul>
+                    <li>Title: <a href="{{song_href}}" target="_blank">{{ name }}</a></li>
+                    <li>Artist: <a href="{{artist_href}}" target="_blank">{{ artist }}</a></li>
+                    <li>Album: <a href="{{album_href}}" target="_blank">{{ album }}</a></li>
+                    <li>Release Date: {{ release_date }}</li>
+                    <li>Acousticness: {{ acoustic }}</li>
+                    <li>Danceability: {{ dance }}</li>
+                    <li>Energy: {{ energy }}</li>
+                    <li>Loudness: {{ loud }}</li>
+                    <li>Liveness: {{ live }}</li>
+                    <li>Speechiness: {{ speech }}</li>
+                    <li>Tempo: {{ tempo }}</li>
+                    <li>Valence: {{ valence }}</li>
+                </ul>
                 {% endif %}
                 {% for song in songs %}
                 <a href="/song/{{ song.name }}"><span class="stack">{{ song.name }}</span></a>
                 {% endfor %}
+                <h3>Enter a song below...</h3>
                 <form action="/" method="post">
                     <input type="text" name="song_name" placeholder="Type your song here to get suggestions for other songs you may like!">
                     <input type="submit" value="Get Suggestions!">
