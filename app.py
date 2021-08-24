@@ -37,7 +37,7 @@ def home():
         artist_href = song['tracks']['items'][0]['artists'][0]['external_urls']['spotify']
         song_href = song['tracks']['items'][0]['external_urls']['spotify']
         album = song['tracks']['items'][0]['album']['name']
-        album_href = song['tracks']['items'][0]['album']['href']
+        album_href = song['tracks']['items'][0]['album']['external_urls']['spotify']
         release_date = song['tracks']['items'][0]['album']['release_date']
         features = sp.audio_features(song_href)
         acoustic = features[0]['acousticness']
