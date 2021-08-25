@@ -17,9 +17,6 @@ token = SpotifyClientCredentials(
 sp = spotipy.Spotify(auth_manager=token)
 
 
-
-# Home route
-@app.route('/', methods=["POST", "GET"])
 def get_5_recs(song_name):
     song = sp.search(q=song_name)
     song_id = song['tracks']['items'][0]['id']
@@ -42,6 +39,7 @@ def get_5_recs(song_name):
     return track_ids, track_titles, track_artists, track_refs, artist_refs
 
 
+# Home route
 @app.route('/', methods=["POST","GET"])
 def home():
     """ Getting song name and returning song and
@@ -89,7 +87,7 @@ def home():
         tempo = features[0]['tempo']
         valence = features[0]['valence']
         ids, titles, artists, track_refs, artist_refs = get_5_recs(name)
-    
+
 
     return render_template('home.html', artist=artist, artist_href=artist_href,
                            song_name=song_name, song_href=song_href, album=album,
