@@ -21,12 +21,12 @@
             {% block content %}
             <div>
                 {% if artist %}
-                <h2>If you like "{{ name }}" by {{ artist }}, then you should check out the 5 songs below!</h2>
-                <p>Here's information for the song "{{ name }}"...</p>
+                <h3>If you like "{{ song_name }}" by {{ artist }}, then you should check out the 5 songs below!</h3>
+                <p>Here's information for the song "{{ song_name }}"...</p>
                 <ul>
-                    <li>Title: <a href="{{song_href}}" target="_blank">{{ name }}</a></li>
-                    <li>Artist: <a href="{{artist_href}}" target="_blank">{{ artist }}</a></li>
-                    <li>Album: <a href="{{album_href}}" target="_blank">{{ album }}</a></li>
+                    <li>Title: <a href="{{ song_href }}" target="_blank">{{ song_name }}</a></li>
+                    <li>Artist: <a href="{{ artist_href }}" target="_blank">{{ artist }}</a></li>
+                    <li>Album: <a href="{{ album_href }}" target="_blank">{{ album }}</a></li>
                     <li>Release Date: {{ release_date }}</li>
                     <li>Acousticness: {{ acoustic }}</li>
                     <li>Danceability: {{ dance }}</li>
@@ -37,10 +37,15 @@
                     <li>Tempo: {{ tempo }}</li>
                     <li>Valence: {{ valence }}</li>
                 </ul>
-                {% endif %}
-                {% for song in songs %}
-                <a href="/song/{{ song.name }}"><span class="stack">{{ song.name }}</span></a>
+                {% for i in range(0, 5) %}
+                    <p>Recommendation {{ i+1 }}:</p>
+                    <ul>
+                        <li>Title: <a href="{{ track_refs[i] }}" target="_blank">{{ titles[i] }}</a></li>
+                        <li>Artist: <a href="{{ artist_refs[i] }}" target="_blank">{{ artists[i] }}</a></li>
+                    </ul>
                 {% endfor %}
+                {% endif %}
+
                 <h3>Enter a song below...</h3>
                 <form action="/" method="post">
                     <input type="text" name="song_name" placeholder="Type your song here to get suggestions for other songs you may like!">
