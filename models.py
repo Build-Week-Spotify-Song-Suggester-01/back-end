@@ -2,20 +2,22 @@ from .app import sp
 import numpy as np
 
 
-# Grab 5 songs at random from the longest playlist on Spotify
-def get_5():
-    playlist = sp.playlist_tracks(playlist_id='6yPiKpy7evrwvZodByKvM9',
-                                  offset=(np.random.randint(200) * 50),
-                                  limit=100)['items']
+def get_5_recs(song_name):
+    song = sp.search(q=song_name)
+    song_id = song['tracks']['items'][0]['id']
+    song_name = song['tracks']['items'][0]['name']
+    song_artist = song['tracks']['items'][0]['album']['artists'][0]['name']
+    recs = sp.recommendations(seed_tracks=[str(song_id)],
+                              limit=5)['tracks']
     track_ids = []
-    track_names = []
+    track_titles = []
     track_artists = []
-    for num in np.random.choice(100, 5):
-        track_ids.append(playlist[num]['track']['id'])
-        track_names.append(playlist[num]['track']['name'])
-        track_artists.append(playlist[num]['track']['album']['artists'][0]['name'])
+    for rec in recs:
+        track_ids.append(rec['id'])
+        track_titles.append(rec['name'])
+        track_artists.append(rec['album']['artists'][0]['name'])
     
-    return track_ids, track_names, track_artists
+    return track_ids, track_titles, track_artists
 
 
 def get_audio_features(track_ids):
