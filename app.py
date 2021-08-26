@@ -1,15 +1,18 @@
+# import statements
 from flask import Flask, render_template, request
 from spotipy.oauth2 import SpotifyClientCredentials
 import spotipy
 
-   
+# making and configuring flask app
 app = Flask(__name__)
 app.config['DEBUG'] = True
 app.config['EXPLAIN_TEMPLATE_LOADING'] = True
 
+# token for Spotify API
 token = SpotifyClientCredentials(
     client_id="516dcc7dd59a48eb85604f46f2aa134a",
     client_secret="4326ec02ca5e4df6b46066bb774006a4")
+# connecting to Spotipy using token
 sp = spotipy.Spotify(auth_manager=token)
 
 
@@ -35,25 +38,27 @@ def get_5_recs(song_name):
         track_titles.append(rec['name'])
         track_artists.append(rec['album']['artists'][0]['name'])
         track_refs.append(rec['external_urls']['spotify'])
-        artist_refs.append(rec['album']['artists'][0]['external_urls']['spotify'])
-    
+        artist_refs.append(
+            rec['album']['artists'][0]['external_urls']['spotify'])
+
     return track_ids, track_titles, track_artists, track_refs, artist_refs
 
 
 def get_audio_features(track_ids, names):
+    """ Function to get audio features and return
+    as a dictionary """
     features = []
     for track in track_ids:
         metrics = sp.audio_features(track)[0]
-        features_ = {k : v for k, v in metrics.items()}
+        features_ = {k: v for k, v in metrics.items()}
         features.append(features_)
 
     return dict(zip(names, features))
 
 
-@app.route('/', methods=["POST","GET"])
+@app.route('/', methods=["POST", "GET"])
 def home():
     """ Home function to return song and audio metrics """
-    
     # getting song and assigning to "name"
     name = request.form.get('song_name')
     artist = ''
@@ -76,11 +81,11 @@ def home():
     if name:
         song = sp.search(q=name)
         artist = song['tracks']['items'][0]['album']['artists'][0]['name']
-        artist_href = song['tracks']['items'][0]['artists'][0]['external_urls']['spotify']
+        artist_href = song['tracks']['items'][0]['artists'][0]\
+            ['external_urls']['spotify']
         song_name = song['tracks']['items'][0]['name']
         song_href = song['tracks']['items'][0]['external_urls']['spotify']
         release_date = song['tracks']['items'][0]['album']['release_date']
-        
         # assigning song metrics to "features"
         features = sp.audio_features(song_href)
         acoustic = features[0]['acousticness']
@@ -91,13 +96,12 @@ def home():
         valence = features[0]['valence']
         instrument = features[0]['instrumentalness']
         ids, titles, artists, track_refs, artist_refs = get_5_recs(name)
-    
 
     # retuning the template for html encoding
     return render_template('home.html', artist=artist, artist_href=artist_href,
                            song_name=song_name, song_href=song_href,
                            release_date=release_date, acoustic=acoustic,
-                           dance=dance, energy=energy, live=live, speech=speech,
-                           valence=valence, titles=titles, artists=artists,
-                           track_refs=track_refs, artist_refs=artist_refs,
-                           instrument=instrument)
+                           dance=dance, energy=energy, live=live,
+                           speech=speech, valence=valence, titles=titles,
+                           artists=artists, track_refs=track_refs,
+                           artist_refs=artist_refs, instrument=instrument)
