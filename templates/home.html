@@ -26,16 +26,14 @@
                 <ul>
                     <li>Title: <a href="{{ song_href }}" target="_blank">{{ song_name }}</a></li>
                     <li>Artist: <a href="{{ artist_href }}" target="_blank">{{ artist }}</a></li>
-                    <li>Album: <a href="{{ album_href }}" target="_blank">{{ album }}</a></li>
                     <li>Release Date: {{ release_date }}</li>
                     <li>Acousticness: {{ acoustic }}</li>
                     <li>Danceability: {{ dance }}</li>
                     <li>Energy: {{ energy }}</li>
-                    <li>Loudness: {{ loud }}</li>
                     <li>Liveness: {{ live }}</li>
                     <li>Speechiness: {{ speech }}</li>
-                    <li>Tempo: {{ tempo }}</li>
                     <li>Valence: {{ valence }}</li>
+                    <li>Instrumentalness: {{ instrument }}</li>
                 </ul>
                 {% for i in range(0, 5) %}
                     <p>Recommendation {{ i+1 }}:</p>
