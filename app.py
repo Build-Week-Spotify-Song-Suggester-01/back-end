@@ -2,6 +2,8 @@
 from flask import Flask, render_template, request
 from spotipy.oauth2 import SpotifyClientCredentials
 import spotipy
+import matplotlib.pyplot as plt
+import numpy as np
 
 # making and configuring flask app
 app = Flask(__name__)
@@ -54,6 +56,70 @@ def get_audio_features(track_ids, names):
         features.append(features_)
 
     return dict(zip(names, features))
+
+def make_graphs(song):
+    '''makes 6 bar graphs displaying the audio features of
+    the input song and the 5 suggested songs'''
+    # get recommended songs
+    ids, names, artists, t_refs, a_refs = get_5_recs(song)
+
+    # get audio features of recommended songs
+    features = []
+    for track in ids:
+        features.append(sp.audio_features(track)[0])
+
+    # get features for original song
+    original_song = sp.search(q=song)
+    song_id = original_song['tracks']['items'][0]['id']
+    original_features = sp.audio_features(song_id)
+
+    # binary features are between 0 and 1
+    binary_feats = ['danceability', 'energy', 'speechiness', 'acousticness',
+                    'instrumentalness', 'liveness', 'valence']
+
+    # other features are not between 0 and 1 but still numeric
+    other_feats = ['mode', 'time_signature', 'tempo',
+                   'duration_ms', 'loudness']
+
+    # get binary feature values for original song
+    binary_vals = []
+    for feat in binary_feats:
+        binary_vals.append(original_features[0][feat])
+
+    # create subplots
+    fig, ax = plt.subplots(6, 1, sharex='col', sharey='col', figsize=(6, 8))
+    # configure subplots
+    plt.subplots_adjust(left=0.125, bottom=0.1, right=0.9,
+                        top=1.5, wspace=0.2, hspace=0.5)
+
+    # plot the original song's metrics
+    y_pos = np.arange(len(binary_feats))
+    ax[0].barh(y_pos, binary_vals, align='center',
+               color=['b', 'm', 'g', 'b', 'tab:orange', 'y', 'r'],
+               edgecolor='k', linewidth=1)
+
+    # set up rest of graph
+    ax[0].set_yticks(y_pos)
+    ax[0].set_yticklabels(binary_feats)
+    ax[0].invert_yaxis()  # labels read top-to-bottom
+    ax[0].set_xlabel('Rating')
+    ax[0].set_title('Original Song Metrics')
+
+    # loop through each suggested song
+    for i in range(len(ids)):
+        # get audio features for each song
+        binary_vals = []
+        for feat in binary_feats:
+            binary_vals.append(features[i][feat])
+
+        # plot each song and label the x-axis and title
+        ax[i+1].barh(y_pos, binary_vals, align='center',
+                     color=['b', 'm', 'g', 'b', 'tab:orange', 'y', 'r'],
+                     edgecolor='k', linewidth=1)
+        ax[i+1].set_xlabel('Rating')
+        ax[i+1].set_title(f'Suggested Song {i+1} Metrics')
+
+    plt.show()
 
 
 @app.route('/', methods=["POST", "GET"])
