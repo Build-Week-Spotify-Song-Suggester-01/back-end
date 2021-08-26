@@ -14,10 +14,13 @@ sp = spotipy.Spotify(auth_manager=token)
 
 
 def get_5_recs(song_name):
+    """ Function to use .recommendations() to
+    return 5 similar songs """
     song = sp.search(q=song_name)
     song_id = song['tracks']['items'][0]['id']
     song_name = song['tracks']['items'][0]['name']
     song_artist = song['tracks']['items'][0]['album']['artists'][0]['name']
+    # .recommendations returns 5 similar songs
     recs = sp.recommendations(seed_tracks=[str(song_id)],
                               limit=5)['tracks']
     track_ids = []
@@ -25,6 +28,8 @@ def get_5_recs(song_name):
     track_artists = []
     track_refs = []
     artist_refs = []
+    # for loop to return track id, title, artist and the url
+    # for song recommendations
     for rec in recs:
         track_ids.append(rec['id'])
         track_titles.append(rec['name'])
@@ -47,6 +52,9 @@ def get_audio_features(track_ids, names):
 
 @app.route('/', methods=["POST","GET"])
 def home():
+    """ Home function to return song and audio metrics """
+    
+    # getting song and assigning to "name"
     name = request.form.get('song_name')
     artist = ''
     artist_href = ''
@@ -72,6 +80,8 @@ def home():
         song_name = song['tracks']['items'][0]['name']
         song_href = song['tracks']['items'][0]['external_urls']['spotify']
         release_date = song['tracks']['items'][0]['album']['release_date']
+        
+        # assigning song metrics to "features"
         features = sp.audio_features(song_href)
         acoustic = features[0]['acousticness']
         dance = features[0]['danceability']
@@ -83,6 +93,7 @@ def home():
         ids, titles, artists, track_refs, artist_refs = get_5_recs(name)
     
 
+    # retuning the template for html encoding
     return render_template('home.html', artist=artist, artist_href=artist_href,
                            song_name=song_name, song_href=song_href,
                            release_date=release_date, acoustic=acoustic,
